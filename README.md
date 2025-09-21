@@ -1,80 +1,173 @@
-Financial RAG System with Agent Capabilities
-This is a Retrieval-Augmented Generation (RAG) system designed to analyze and answer complex questions about financial 10-K documents. It uses an autonomous agent to decompose multi-step queries and a vector database to retrieve relevant information from a corpus of financial reports.
+# 📊 Financial RAG System with Agent Capabilities
 
-Features
-Document Processing: Automatically extracts and chunks text from 10-K PDFs in the data/ directory.
+This repository implements a **Financial Retrieval-Augmented Generation (RAG) system** tailored for analyzing **10-K SEC filings** of major tech companies like **Microsoft, Google, and NVIDIA**.
+It has **two main components**:
 
-Vector Store: Utilizes a FAISS-based vector store for efficient similarity search of financial document chunks.
+1. **Data Extraction Pipeline** → Downloads, processes, and chunks SEC 10-K filings into structured JSON format.
+2. **RAG + Agent System** → Uses embeddings, FAISS vector search, and Gemini-powered agents to answer financial queries in natural language.
 
-Semantic Search: Employs the Sentence-Transformers model (all-MiniLM-L6-v2) to create high-quality embeddings for accurate retrieval.
+---
 
-Query Decomposition: A custom QueryDecomposer agent identifies complex, multi-step queries (e.g., cross-company comparisons or year-over-year growth) and breaks them down into simpler, actionable sub-queries.
+## 🚀 Features
 
-Autonomous Agent: The system leverages a LangChain ReAct agent to reason about the user's request and effectively use the FinancialRAGTool to retrieve information.
+✅ **Automated SEC Filings Downloader** (HTML/PDF)
+✅ **Text Extraction & Chunking** (BeautifulSoup, PyPDF2)
+✅ **Document Structuring** into JSON with metadata (company, year, section, etc.)
+✅ **Embeddings & Vector Store** using SentenceTransformers + FAISS
+✅ **Gemini LLM Wrapper** integrated with LangChain
+✅ **Query Decomposition Agent** for multi-step reasoning (cross-company, YoY, etc.)
+✅ **JSON-formatted Responses** with sources, reasoning, and extracted context
 
-JSON Output: All results are returned in a structured JSON format, including the final answer, reasoning, sub-queries, and cited sources from the documents.
+---
 
-Setup
-Prerequisites
-Python 3.8 or higher
+## 📂 Project Structure
 
-A Gemini API Key (from Google AI Studio)
+```
+├── data/                     # Downloaded SEC filings + processed docs
+│   ├── GOOGL_2023_10K.html
+│   ├── MSFT_2024_10K.pdf
+│   └── processed_documents.json
+│
+├── vector_store/             # Saved FAISS index + documents
+│   ├── index.faiss
+│   └── documents.pkl
+│
+├── data_extraction.py         # SEC data extraction pipeline
+├── Financial_RAG_system_with_agent_capabilities.py              # RAG system with agent capabilities
+├── requirements.txt
+└── README.md
+```
 
-Installation
-Clone the repository:
+---
 
-git clone [https://github.com/Poojav21/FinQAgent-Finance-Query-Agent-.git]
-cd FinQAgent-Finance-Query-Agent-
+## 🏗️ Part 1: Data Extraction Pipeline
 
-Create and activate a virtual environment:
+File: `sec_downloader.py`
 
-python -m venv venv
-# On Windows
-venv\Scripts\activate
-# On macOS/Linux
-source venv/bin/activate
+### Workflow:
 
-Install the required packages. The following packages are required for the project:
+1. **Download SEC 10-K filings** (PDF or HTML fallback).
+2. **Extract clean text** using BeautifulSoup (HTML) or PyPDF2 (PDF).
+3. **Chunk text** into overlapping segments for embeddings.
+4. **Save structured JSON** with company, year, and chunk metadata.
 
-google-generativeai
-faiss-cpu
-sentence-transformers
-pypdf2
-numpy
-langchain
-langchain-core
-langchain-community
-langchain-google-genai
+### Example Output (`processed_documents.json`):
 
-You can create a requirements.txt file with the above packages and run:
+```json
+[
+  {
+    "content": "Alphabet Inc. is a collection of companies...",
+    "company": "GOOGL",
+    "year": "2023",
+    "filing_type": "10-K",
+    "page": null,
+    "section": null,
+    "chunk_id": "GOOGL_2023_0"
+  }
+]
+```
 
+Run:
+
+```bash
+python data_extraction.py
+```
+
+---
+
+## 🧠 Part 2: RAG Agent System
+
+File: `Financial_RAG_system_with_agent_capabilities.py`
+
+### Components:
+
+* **PDFProcessor** → Converts 10-K PDFs into chunks for embedding.
+* **VectorStore** → FAISS-based similarity search.
+* **GeminiLLM** → Wrapper around Gemini API for natural language reasoning.
+* **QueryDecomposer** → Splits complex questions into sub-queries.
+* **FinancialRAGTool** → LangChain-compatible tool for financial retrieval.
+* **FinancialRAGSystem** → Orchestrates RAG pipeline + agent execution.
+
+### Example Query Flow:
+
+**Question:**
+
+```
+"Compare the R&D spending as a percentage of revenue across all three companies in 2023"
+```
+
+**Decomposition:**
+
+* "Microsoft R\&D spending as % of revenue 2023"
+* "Google R\&D spending as % of revenue 2023"
+* "NVIDIA R\&D spending as % of revenue 2023"
+
+**Answer (JSON):**
+
+```json
+{
+  "query": "Compare the R&D spending as a percentage of revenue across all three companies in 2023",
+  "answer": "In 2023, Microsoft spent 13% of revenue on R&D, Google 15%, and NVIDIA 20%. NVIDIA had the highest R&D intensity.",
+  "reasoning": "Decomposed query into 3 sub-questions and synthesized results",
+  "sub_queries": [
+    "Microsoft R&D spending 2023",
+    "Google R&D spending 2023",
+    "NVIDIA R&D spending 2023"
+  ],
+  "sources": [
+    {"company": "MSFT", "year": "2023", "excerpt": "R&D expenses were...", "page": 45, "score": 0.92},
+    {"company": "GOOGL", "year": "2023", "excerpt": "Our R&D spending...", "page": 32, "score": 0.88},
+    {"company": "NVDA", "year": "2023", "excerpt": "Research and development costs...", "page": 27, "score": 0.90}
+  ]
+}
+```
+
+---
+
+## ⚡ Usage
+
+### 1. Setup Environment
+
+```bash
 pip install -r requirements.txt
+```
 
-Add your Gemini API key to the FinancialRAGSystem class in rag.py. You must replace "YOUR_ACTUAL_GEMINI_API_KEY" with your key.
+### 2. Download Filings & Process
 
-Data
-Place your financial 10-K PDFs in the data/ directory. The script expects the files to be organized by company and year, like this:
+```bash
+python data_extraction.py
+```
 
-data/
-└── google/
-    ├── 2022.pdf
-    └── 2023.pdf
-└── nvidia/
-    ├── 2022.pdf
-    └── 2023.pdf
+### 3. Build RAG System & Query
 
-Usage
-Run the main script from your terminal:
+```bash
+python Financial_RAG_system_with_agent_capabilities.py
+```
 
-python rag.py
+* Choose to run **test queries** (predefined)
+* Or ask interactively:
 
-The system will first set up by either loading an existing vector store or building a new one from your PDF documents.
+```bash
+Your question: What was NVIDIA's total revenue in fiscal year 2024?
+```
 
-You will then be prompted to choose between running predefined test queries or entering interactive mode.
+---
 
-Interactive Mode
-Simply type your financial question and press Enter. The system will process the query, retrieve relevant information, and provide a comprehensive answer in JSON format.
+## ✅ Example Test Queries
 
-Your question: How much did Microsoft's cloud revenue grow from 2022 to 2023?
+* "What was NVIDIA's total revenue in fiscal year 2024?"
+* "What percentage of Google's 2023 revenue came from advertising?"
+* "How much did Microsoft's cloud revenue grow from 2022 to 2023?"
+* "Which of the three companies had the highest gross margin in 2023?"
+* "Compare the R\&D spending as a percentage of revenue across all three companies in 2023"
 
-The output will be a detailed JSON object containing the final answer, the breakdown of sub-queries, and the original document excerpts used as sources.
+---
+
+## 🔮 Future Improvements
+
+* Support **more SEC filing types** (10-Q, 8-K).
+* Add **financial ratio calculators** as tools.
+* Enhance **multi-hop reasoning** across documents.
+* Integrate **streamlit/Gradio UI** for interactive dashboards.
+
+
