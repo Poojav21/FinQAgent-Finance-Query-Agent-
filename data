@@ -1,1 +1,135 @@
+Financial RAG System with Agent Capabilities
+==================================================
+Setting up system...
+System ready! Loaded 3580 documents
+Companies: Google, Microsoft, Nvidia
+Years: 2022, 2023, 2024
 
+==================================================
+Run test queries? (y/n): y
+Financial RAG System Test Results
+==================================================
+
+1. What was NVIDIA's total revenue in fiscal year 2024?
+------------------------------
+{
+  "query": "What was NVIDIA's total revenue in fiscal year 2024?",
+  "answer": "The document provides NVIDIA's revenue for the years ended January 30, 2022, January 31, 2021, and January 26, 2020. It does not provide the revenue for fiscal year 2024.",
+  "reasoning": "Direct query execution",
+  "sub_queries": [
+    "What was NVIDIA's total revenue in fiscal year 2024?"
+  ],
+  "sources": [
+    {
+      "company": "Nvidia",
+      "year": "2022",
+      "excerpt": ". 46 [PAGE 82] 9/20/25, 11:07 AM nvda-20220130 https://www.sec.gov/Archives/edgar/data/1045810/000104581022000036/nvda-20220130.htm 82/128Table of Con...",
+      "page": 82,
+      "score": 0.7411227822303772
+    }
+  ]
+}
+
+2. What percentage of Google's 2023 revenue came from advertising?
+------------------------------
+{
+  "query": "What percentage of Google's 2023 revenue came from advertising?",
+  "answer": "77.38%",
+  "reasoning": "Direct query execution",
+  "sub_queries": [
+    "What percentage of Google's 2023 revenue came from advertising?"
+  ],
+  "sources": [
+    {
+      "company": "Google",
+      "year": "2023",
+      "excerpt": ". \u2022Capital expenditures, which primarily reflected investments in technical infrastructure, were $32.3 billion for the year ended December 31, 2023. \u2022...",
+      "page": 1,
+      "score": 0.732961893081665
+    }
+  ]
+}
+
+3. How much did Microsoft's cloud revenue grow from 2022 to 2023?
+------------------------------
+{
+  "query": "How much did Microsoft's cloud revenue grow from 2022 to 2023?",
+  "answer": "Microsoft's cloud revenue grew significantly from 2022 to 2023. In 2022, their cloud revenue was $91.2 billion. In 2023, it reached $111.7 billion. This represents an increase of $20.5 billion in cloud revenue for Microsoft during that period.",
+  "reasoning": "Decomposed query into 2 sub-questions and synthesized results",
+  "sub_queries": [
+    "Microsoft cloud revenue 2022",
+    "Microsoft cloud revenue 2023"
+  ],
+  "sources": [
+    {
+      "company": "Microsoft",
+      "year": "2022",
+      "excerpt": ". They also support new startups, improve educational and health outcomes, and empower human ingenuity. We generate revenue by offering a wide range o...",
+      "page": 1,
+      "score": 0.8246636390686035
+    },
+    {
+      "company": "Microsoft",
+      "year": "2024",
+      "excerpt": ". We create platforms and tools, powered by AI, that deliver innovative solutions that meet the evolving needs of our customers. We generate revenue b...",
+      "page": 1,
+      "score": 0.8281853199005127
+    }
+  ]
+}
+
+4. Which of the three companies had the highest gross margin in 2023?
+------------------------------
+{
+  "query": "Which of the three companies had the highest gross margin in 2023?",
+  "answer": "The excerpt only provides the gross margin for Nvidia. Therefore, it is impossible to determine which of the three companies had the highest gross margin in 2023 based on the information provided.",
+  "reasoning": "Direct query execution",
+  "sub_queries": [
+    "Which of the three companies had the highest gross margin in 2023?"
+  ],
+  "sources": [
+    {
+      "company": "Nvidia",
+      "year": "2023",
+      "excerpt": ". Gross margin was 56.9% and 64.9% for fiscal years 2023 and 2022, respectively. The decrease in fiscal year 2023 was primarily due to $2.17 billion o...",
+      "page": 1,
+      "score": 0.5538157820701599
+    }
+  ]
+}
+
+5. Compare the R&D spending as a percentage of revenue across all three companies in 2023
+------------------------------
+{
+  "query": "Compare the R&D spending as a percentage of revenue across all three companies in 2023",
+  "answer": "The provided information only gives us the total revenue for Microsoft and Google in 2023. We do not have NVIDIA's revenue for 2023, only for prior years. Therefore, we cannot compare R&D spending as a percentage of revenue across all three companies for 2023. To answer the original question fully, we would need the 2023 R&D spending for each company AND NVIDIA's 2023 revenue.\n\nHere's what we *could* do if we had the R&D spending figures:\n\n1. **Find the R&D spending for each company in 2023.** (This data is missing).\n2. **Calculate the R&D percentage for Microsoft:** (Microsoft 2023 R&D / $211,915 million) * 100%\n3. **Calculate the R&D percentage for Google:** (Google 2023 R&D / $307,394 million) * 100%\n4. **Calculate the R&D percentage for NVIDIA:** (NVIDIA 2023 R&D / NVIDIA 2023 Revenue) * 100%\n5. **Compare the percentages.** The company with the highest percentage would be spending the largest portion of their revenue on R&D.\n\n**Without R&D figures and NVIDIA's 2023 revenue, we can't provide a meaningful comparison.**",
+  "reasoning": "Decomposed query into 3 sub-questions and synthesized results",
+  "sub_queries": [
+    "Microsoft total revenue 2023",
+    "Google total revenue 2023",
+    "NVIDIA total revenue 2023"
+  ],
+  "sources": [
+    {
+      "company": "Microsoft",
+      "year": "2023",
+      "excerpt": ". 94(a) [PAGE 99] 9/20/25, 11:04 AM 10-K https://www.sec.gov/Archives/edgar/data/789019/000095017023035122/msft-20230630.htm 99/113PART II Item 8 Reve...",
+      "page": 99,
+      "score": 0.7339181303977966
+    },
+    {
+      "company": "Google",
+      "year": "2023",
+      "excerpt": ". \u2022Capital expenditures, which primarily reflected investments in technical infrastructure, were $32.3 billion for the year ended December 31, 2023. \u2022...",
+      "page": 1,
+      "score": 0.7895113825798035
+    },
+    {
+      "company": "Nvidia",
+      "year": "2022",
+      "excerpt": ". Two customers represented 22% of our accounts receivable balance as of January 30, 2022. One customer represented 16% of our accounts receivable bal...",
+      "page": 122,
+      "score": 0.7502850294113159
+    }
+  ]
+}
