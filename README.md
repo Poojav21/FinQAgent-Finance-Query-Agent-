@@ -33,7 +33,7 @@ It has **two main components**:
 │   └── documents.pkl
 │
 ├── data_extraction.py         # SEC data extraction pipeline
-├── Financial_RAG_system_with_agent_capabilities.py              # RAG system with agent capabilities
+├── rag.py              # RAG system with agent capabilities
 ├── requirements.txt
 └── README.md
 ```
@@ -77,7 +77,7 @@ python data_extraction.py
 
 ## 🧠 Part 2: RAG Agent System
 
-File: `Financial_RAG_system_with_agent_capabilities.py`
+File: `rag.py`
 
 ### Components:
 
@@ -141,7 +141,7 @@ python data_extraction.py
 ### 3. Build RAG System & Query
 
 ```bash
-python Financial_RAG_system_with_agent_capabilities.py
+python rag.py
 ```
 
 * Choose to run **test queries** (predefined)
